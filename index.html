@@ -31,7 +31,7 @@ body{
 
 /* running head */
 .runhead{
-  display:flex;justify-content:space-between;align-items:baseline;
+  display:flex;justify-content:space-between;align-items:baseline;gap:16px;
   padding:20px 0 10px;margin-bottom:30px;border-bottom:1px solid var(--rule);
   font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:500;
   letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
@@ -141,7 +141,7 @@ button.back:hover{color:var(--ink)}
 
 /* comparison rendered as a journal table */
 .tablewrap{margin:30px 0 8px}
-.compare{width:100%;border-collapse:collapse;
+.compare{width:100%;border-collapse:collapse;table-layout:fixed;
   border-top:1.5px solid var(--rule);border-bottom:1.5px solid var(--rule)}
 .compare th{
   font-family:Arial,Helvetica,sans-serif;font-size:10.5px;letter-spacing:.09em;
@@ -149,7 +149,8 @@ button.back:hover{color:var(--ink)}
   padding:11px 16px 11px 0;border-bottom:1px solid var(--rule);vertical-align:bottom;
 }
 .compare th:last-child{padding-right:0;padding-left:16px}
-.compare td{padding:18px 16px 18px 0;vertical-align:top;font-size:16px;line-height:1.5;width:50%}
+.compare td{padding:18px 16px 18px 0;vertical-align:top;font-size:16px;line-height:1.5;width:50%;
+  overflow-wrap:anywhere;word-break:break-word}
 .compare td:last-child{padding-right:0;padding-left:16px;border-left:1px solid var(--hair)}
 .compare th.h-i,.compare td.h-i{color:var(--interp)}
 .compare th.h-e,.compare td.h-e{color:var(--evid)}
@@ -170,7 +171,7 @@ button.back:hover{color:var(--ink)}
 .sumrow:last-child{border-bottom:none}
 .sumkey{font-family:Arial,Helvetica,sans-serif;font-weight:600;font-size:10.5px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--ink-3);padding-top:4px}
-.sumval{font-size:15.5px;line-height:1.5}
+.sumval{font-size:15.5px;line-height:1.5;overflow-wrap:anywhere;word-break:break-word}
 @media(max-width:540px){.sumrow{grid-template-columns:1fr;gap:5px}}
 
 .foot{margin-top:46px;padding-top:18px;border-top:1px solid var(--hair);
@@ -180,6 +181,18 @@ button.back:hover{color:var(--ink)}
 
 .goal{font-size:15px;line-height:1.6;color:var(--ink-2);margin:0 0 26px;
   padding-bottom:18px;border-bottom:1px solid var(--hair)}
+details.refs,details.why{margin-top:26px;border-top:1px solid var(--hair);padding-top:12px;
+  font-size:13.5px;line-height:1.55;color:var(--ink-2)}
+details.why{margin-top:-14px;margin-bottom:24px;border-top:none;padding-top:0}
+details.refs>summary,details.why>summary{
+  cursor:pointer;list-style:none;font-family:Arial,Helvetica,sans-serif;font-weight:600;
+  font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+  padding:4px 0;-webkit-tap-highlight-color:transparent}
+details.refs>summary::-webkit-details-marker,details.why>summary::-webkit-details-marker{display:none}
+details.refs>summary::after,details.why>summary::after{content:'  +';font-weight:400}
+details.refs[open]>summary::after,details.why[open]>summary::after{content:'  \2212'}
+details.refs>summary:hover,details.why>summary:hover{color:var(--ink)}
+details.why>div{font-size:15px;color:var(--ink-2);line-height:1.6;padding-top:8px;font-weight:300}
 .refs{margin-top:30px;padding-top:16px;border-top:1px solid var(--hair);font-size:13.5px;line-height:1.55;color:var(--ink-2)}
 .goal + .refs{border-top:none;margin-top:20px;padding-top:0}
 .refs h4{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;
@@ -195,7 +208,8 @@ button.back:hover{color:var(--ink)}
   .wrap{padding:0 18px 24px}
   body{font-size:16px}
   .runhead{padding:16px 0 9px;margin-bottom:24px;font-size:10px;gap:12px}
-  .runhead span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .runhead span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:0 1 auto}
+  .runhead span:last-child{flex:0 0 auto;text-align:right}
   h1{font-size:26px;line-height:1.28}
   h2{font-size:22px;line-height:1.3}
   .lede{font-size:16px;margin-bottom:24px}
@@ -238,7 +252,7 @@ button.back:hover{color:var(--ink)}
   <header class="runhead"><span>Evaluating a behavioral concern</span><span id="progress"></span></header>
   <main id="screen" aria-live="polite"><noscript><h2>JavaScript required</h2><p class="lede">This tool needs JavaScript enabled to run.</p></noscript></main>
   <div class="nav" id="nav"></div>
-  <p class="foot">Educational aid only. This instrument does not provide veterinary or behavioral diagnosis or advice and is not a substitute for professional assessment. Seek professional assistance for behaviors that may pose a safety risk.</p>
+  <p class="foot">Educational aid only. This instrument does not provide veterinary or behavioral diagnosis or advice and is not a substitute for professional assessment. Seek professional assistance for behaviors that may pose a safety risk. No data are stored or transmitted.</p>
 </div>
 
 <script>
@@ -252,12 +266,18 @@ const A={}; let step=0;
 const el=document.getElementById('screen'), nav=document.getElementById('nav'), prog=document.getElementById('progress');
 
 const SPECIES=['dog','cat'];
-const BEHAVIORS_BOTH=['scratching','chewing or destroying objects','urinating','defecating','digging','pacing or circling','lunging','growling or hissing','hiding','not responding when called'];
+const BEHAVIORS_BOTH=['scratching','chewing or destroying objects','urinating outside the usual or appropriate location','defecating outside the usual or appropriate location','digging','pacing or circling','lunging','growling or hissing','hiding','not responding when called'];
 const BEHAVIORS_DOG=['barking','howling'];
 const BEHAVIORS_CAT=['meowing','yowling at night'];
+const OTHER_BEHAVIOR='something else (describe)';
 function behaviorsFor(sp){
   const extra = sp==='dog'?BEHAVIORS_DOG : sp==='cat'?BEHAVIORS_CAT : BEHAVIORS_DOG.concat(BEHAVIORS_CAT);
-  return BEHAVIORS_BOTH.concat(extra).sort();
+  return BEHAVIORS_BOTH.concat(extra).sort().concat([OTHER_BEHAVIOR]);
+}
+function isOther(){return A.behavior===OTHER_BEHAVIOR}
+// the label used in prose and in the record
+function behaviorLabel(){
+  return isOther() ? ((A.behaviorOther||'').trim() || 'the reported behavior') : (A.behavior||'the reported behavior');
 }
 const PLACES=['indoors, one specific room','indoors, several rooms','at a doorway or window','in a crate or carrier','in the yard or garden','on walks or outdoors','anywhere'];
 const DIRECTED=['a person in the household','a visitor','another animal in the household','an animal outside','an object','not directed at anyone'];
@@ -266,11 +286,11 @@ const DURATIONS=['started today','a few days','a few weeks','a few months','a ye
 const FREQ=['once only','several times a day','about daily','several times a week','occasionally','varies a lot'];
 const EPISODE=['seconds','under a minute','one to five minutes','five to thirty minutes','longer than thirty minutes'];
 
-const CONCERNS=['Damage to property','Noise','Safety of a person','Safety of another animal','Mess or hygiene','Disrupts sleep','Disrupts my routine','Complaints from others','I think my animal is suffering','I think my animal is misbehaving'];
+const CONCERNS=['Damage to property','Noise','Safety of a person','Safety of another animal','Mess or hygiene','Disrupts sleep','Disrupts my routine','Complaints from others','I think my animal is suffering','I think my animal is misbehaving','Something else (describe)'];
 const TRAITS=['Being mischievous','Mad at me','Getting back at me','Being spiteful','Being stubborn','Jealous','Knows better','Being dominant','Bored','Stressed','In pain','Scared','Wants attention','Was never taught otherwise','I genuinely do not know'];
 const CHANGED=['It is completely new','More often than before','More intense than before','Lasts longer than before','A different object or target','A different room or place','A different time of day','Nothing has changed'];
-const SIGNS=['Change in appetite or thirst','Change in sleep','Reluctant to jump or climb','Stiffness or limping','Change in grooming','Change in toileting','Weight change','Sensitive to being touched','Change in voice or vocalizing','Started a new medication'];
-const CLINICAL=['Intense or persistent fear','Panic when left alone','Repeated attempts to escape or hide','Takes a long time to settle after something startles them','Constantly on alert, hard to relax','Repetitive actions that seem hard to interrupt','A marked change in personality or routine','Aggression that is escalating','Seems disoriented or confused','Cannot settle anywhere, in any room'];
+const SIGNS=['None that I have noticed','Change in appetite or thirst','Change in sleep','Reluctant to jump or climb','Stiffness or limping','Change in grooming','Change in toileting','Weight change','Sensitive to being touched','Change in voice or vocalizing','Started a new medication'];
+const CLINICAL=['None of these','Intense or persistent fear','Panic when left alone','Repeated attempts to escape or hide','Takes a long time to settle after something startles them','Constantly on alert, hard to relax','Repetitive actions that seem hard to interrupt','A marked change in personality or routine','Aggression that is escalating','Seems disoriented or confused','Cannot settle anywhere, in any room'];
 const BEFORE=['I arrive','I leave','A visitor arrives','Another animal is nearby','An animal is visible outside','Feeding time','A noise outside','Something was taken away or blocked','Nothing I can identify'];
 const AFTER=['I react or speak to them','I move them away','They are left alone','They get something they wanted','They get access to something','The person or animal went away','Nothing changes'];
 const HOUSEHOLD=['A move or renovation','A new person in the home','A person left the home','A new animal','An animal died or left','A change in my working hours','A change in their routine or diet','Nothing has changed'];
@@ -292,19 +312,19 @@ const EXPLANATIONS=[
  'Not enough evidence yet'];
 
 const PLANS={
- 'Species-typical behavior expressed where or when it conflicts with the household':'Give the behavior an acceptable place in or near the room where it already happens, and make the current spot less available.',
+ 'Species-typical behavior expressed where or when it conflicts with the household':'Consider giving the behavior an acceptable outlet in or near the place it already happens, and making the current location less available.',
  'Environmental provision may be contributing':'Review whether suitable outlets are available where and when the animal is motivated to use them, rather than only where they are convenient. Where they are not, providing them is a reasonable first step.',
  'Learning history or consequences may be contributing':'Examine what reliably follows the behavior and whether those consequences may be maintaining it. Where they appear to be, modify the contingencies safely while teaching and reinforcing an appropriate alternative that serves the same function. Do not attempt this with behavior that carries any risk of injury.',
- 'Fear or anxiety':'Reduce exposure to the trigger, make sure the animal can retreat, and get qualified behavioral help before attempting any exposure work.',
+ 'Fear or anxiety':'Consider reducing exposure to the suspected trigger and making sure the animal can retreat, and seek qualified behavioral assessment before attempting any exposure work.',
  'An affective response associated with blocked access or an external stimulus':'Consider what the animal is oriented toward and whether access to it is blocked, unpredictable, or aversive. Where access can be provided in a manageable form, that is often preferable to preventing the behavior alone.',
- 'A response to a change in the household or routine':'Restore predictability where you can and give the animal time to adjust.',
+ 'A response to a change in the household or routine':'Consider restoring predictability where you can, and allow time for the animal to adjust.',
  'A physical or medical contribution':'Book a veterinary appointment and take the pattern you recorded here with you.',
  'Something that needs professional behavioral assessment':'Ask your veterinarian for referral to a veterinary behaviorist or a qualified, reward-based behavior professional.',
  'Several contributing processes may be interacting':'Where welfare or safety requires it, address the interacting contributors together. Record each change you make, recognizing that simultaneous changes may prevent you from identifying which one produced any improvement.',
- 'Not enough evidence yet':'Keep a short daily note of when the behavior happens and what surrounds it, then work through this again.'};
+ 'Not enough evidence yet':'Consider keeping a short daily note of when the behavior happens and what surrounds it, then work through this again.'};
 
 // behaviors where new or changed onset warrants medical consideration regardless of reported signs
-const MEDSENS=['urinating','defecating','pacing or circling','howling','meowing','yowling at night','growling or hissing','lunging','hiding','not responding when called'];
+const MEDSENS=['urinating outside the usual or appropriate location','defecating outside the usual or appropriate location','pacing or circling','howling','meowing','yowling at night','growling or hissing','lunging','hiding','not responding when called'];
 const SAFETY_CONCERNS=['Safety of a person','Safety of another animal'];
 const AGGRESSIVE_FORM=['lunging','growling or hissing'];
 const DIRECTED_LIVING=['a person in the household','a visitor','another animal in the household','an animal outside'];
@@ -339,7 +359,34 @@ function relevantFor(){
   const shown=provisionList();
   return base.filter(x=>shown.includes(x));
 }
+const NONE={changed:'Nothing has changed',household:'Nothing has changed',
+            before:'Nothing I can identify',after:'Nothing changes',
+            signs:'None that I have noticed',clinical:'None of these',
+            initial:'I genuinely do not know',
+            explanations:'Not enough evidence yet'};
 function has(k,v){return (A[k]||[]).includes(v)}
+// selections excluding the group's 'none' answer
+function positive(k){const n=NONE[k];return (A[k]||[]).filter(v=>v!==n)}
+// answered means: at least one selection, including an explicit 'none'
+function answered(k){return (A[k]||[]).length>0}
+function hasInitial(){return !!((A.initialText||'').trim()) || (A.initial||[]).length>0}
+function stepOk(){
+  if(step===1)return ['species','behavior','place','directed','when','freq','episode','duration'].every(k=>A[k])
+    && (!isOther() || !!(A.behaviorOther||'').trim());
+  if(step===2)return answered('concerns')
+    && (!has('concerns','Something else (describe)') || !!(A.concernOther||'').trim());
+  if(step===3)return hasInitial();
+  if(step===4)return answered('typical');
+  if(step===5)return answered('changed') && answered('household');
+  if(step===6){const P=A.prov||{};
+    return answered('before') && answered('after') && relevantFor().every(r=>P[r]);}
+  if(step===7)return answered('signs');
+  if(step===8)return answered('clinical');
+  if(step===9)return answered('explanations');
+  if(step===10)return answered('verdict');
+  return true;
+}
+function syncNext(){const b=document.getElementById('next'); if(b)b.disabled=!stepOk();}
 function anyOf(k,list){return (A[k]||[]).some(x=>list.includes(x))}
 const SELF_INJURY=['Panic when left alone','Repeated attempts to escape or hide'];
 function selfInjuryRisk(){return anyOf('clinical',SELF_INJURY)}
@@ -351,7 +398,7 @@ function safetyTriggered(){
       || selfInjuryRisk()
       || (aggressiveForm && directedAtLiving);
 }
-const ALWAYS_MED=['urinating','defecating'];
+const ALWAYS_MED=['urinating outside the usual or appropriate location','defecating outside the usual or appropriate location'];
 function changeReported(){
   // any positive change indicator counts, even if 'Nothing has changed' was also ticked
   return CHANGED.some(c=>c!=='Nothing has changed'&&has('changed',c));
@@ -364,15 +411,15 @@ function presentationWarrantsMedical(){
 function medicalReason(){
   if(ALWAYS_MED.includes(A.behavior)) return 'Elimination outside an appropriate location warrants assessment for a physical cause whether or not it is new, and whether or not other signs have been noticed.';
   if(has('typical','Repetitive and apparently without function')) return 'Repetitive behavior with no apparent function warrants assessment for a physical cause, including neurological contributions.';
-  return A.behavior+' was recorded as new or altered. For this presentation, that alone warrants assessment for a physical cause.';
+  return behaviorLabel()+' was recorded as new or altered. For this presentation, that alone warrants assessment for a physical cause.';
 }
 function medicalTriggered(){
-  return (A.signs||[]).length>0 || presentationWarrantsMedical();
+  return positive('signs').length>0 || presentationWarrantsMedical();
 }
 const CLINICAL_SEVERE=['Intense or persistent fear','Panic when left alone','Repeated attempts to escape or hide','Repetitive actions that seem hard to interrupt','A marked change in personality or routine','Aggression that is escalating','Seems disoriented or confused','Cannot settle anywhere, in any room'];
 function behavioralTriggered(){
   return anyOf('clinical',CLINICAL_SEVERE)
-      || (A.clinical||[]).length>1
+      || positive('clinical').length>1
       || has('typical','Repetitive and apparently without function')
       || has('typical','No, outside the expected repertoire');
 }
@@ -396,7 +443,7 @@ function inferred(){
   const HOUSEHOLD_IMPACT=['Damage to property','Noise','Mess or hygiene','Disrupts sleep','Disrupts my routine','Complaints from others'];
   const relOK=relevantFor().every(r=>(A.prov||{})[r]==='yes');
   if(has('typical','Yes, species-typical') && anyOf('concerns',HOUSEHOLD_IMPACT)
-     && relOK && !medicalTriggered() && !behavioralTriggered())
+     && relOK && !medicalTriggered() && !behavioralTriggered() && !safetyTriggered())
     out.add('Species-typical behavior expressed where or when it conflicts with the household');
   if((A.household||[]).length>0 && !has('household','Nothing has changed')) out.add('A response to a change in the household or routine');
   if(out.size===0) out.add('Not enough evidence yet');
@@ -405,12 +452,13 @@ function inferred(){
 
 function triple(name,items,relevant){
   A[name]=A[name]||{};
+  if(!items.length) return '';
   return `<div class="triple" data-name="${name}">`+items.map(i=>{
     const v=A[name][i]||'';
     const rel=relevant.includes(i);
-    return `<div class="trow${rel?' rel':''}"><div class="tlabel">${i}${rel?' <span class="relmark">relevant</span>':''}</div>`+
+    return `<div class="trow${rel?' rel':''}" role="group" aria-label="${esc(i)}"><div class="tlabel">${i}${rel?' <span class="relmark">relevant</span>':''}</div>`+
       ['yes','no','unsure'].map(o=>
-        `<button type="button" class="tbtn${v===o?' on':''}" data-i="${esc(i)}" data-o="${o}">${o==='yes'?'Yes':o==='no'?'No':'Unsure'}</button>`).join('')+
+        `<button type="button" class="tbtn${v===o?' on':''}" aria-pressed="${v===o}" data-i="${esc(i)}" data-o="${o}">${o==='yes'?'Yes':o==='no'?'No':'Unsure'}</button>`).join('')+
     `</div>`;
   }).join('')+`</div>`;
 }
@@ -419,7 +467,7 @@ function chips(name,items,cls){
   return `<div class="chips ${cls||''}" data-name="${name}">`+items.map(i=>
     `<button type="button" class="chip" aria-pressed="${A[name].includes(i)}" data-v="${esc(i)}">${i}</button>`).join('')+`</div>`;
 }
-function esc(s){return String(s).replace(/"/g,'&quot;')}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function sel(name,items,ph){
   return `<select data-name="${name}"><option value="">${ph}</option>`+
     items.map(i=>`<option ${A[name]===i?'selected':''}>${i}</option>`).join('')+`</select>`;
@@ -428,14 +476,25 @@ function safetyBanner(){
   return safetyTriggered()?`<div class="flag"><strong>Safety comes first</strong>${selfInjuryRisk()&&!anyOf('concerns',SAFETY_CONCERNS)?'Panic or repeated attempts to escape can result in injury to the animal itself, including damage to teeth, claws, and soft tissue.':'A risk to a person or another animal has been reported.'} Keep recording the pattern, but do not deliberately recreate or test the situation. Arrange veterinary and qualified behavioral assistance rather than working through this alone.</div>`:'';
 }
 
+const STAGES=['',
+ 'Describe \u00b7 The behavior',
+ 'Describe \u00b7 Basis of concern',
+ 'Initial explanation',
+ 'Gather evidence \u00b7 Species repertoire',
+ 'Gather evidence \u00b7 Change from baseline',
+ 'Gather evidence \u00b7 Context and provision',
+ 'Gather evidence \u00b7 Physical contribution',
+ 'Gather evidence \u00b7 Affective and clinical',
+ 'Candidate explanations',
+ 'Compare',
+ 'Act',
+ 'Record and reassess'];
+
 const SCREENS=[
-()=>`<div class="eyebrow">A structured instrument for caregivers, trainers, and clinicians</div>
-<h1>Evaluating a behavioral concern</h1>
-<p class="lede">This instrument helps users describe a behavioral concern, gather relevant information, and reconsider what they initially thought was causing it.</p>
-<p class="goal" style="border-bottom:none;padding-bottom:0;margin-bottom:16px">People naturally try to explain why behavior occurs. These explanations, or causal attributions, can begin forming while the behavior is still being observed, sometimes without the observer realizing it (Winter &amp; Uleman, 1984). Once an explanation has been formed, it can influence which information is noticed or sought afterward (Nickerson, 1998). This instrument records the user&rsquo;s initial explanation before gathering information about the animal&rsquo;s behavior, health, environment, and circumstances. It then returns to the initial explanation and asks whether it still fits the available evidence.</p><p class="goal" style="border-bottom:none;padding-bottom:0;margin-bottom:16px">The goal is not to prevent people from interpreting behavior, but to separate what was observed from what is believed to have caused it.</p><p class="goal">No data are stored or transmitted.</p>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://www.aaha.org/resources/2015-aaha-canine-and-feline-behavior-management-guidelines/" target="_blank" rel="noopener">AAHA Canine and Feline Behavior Management Guidelines (2015)</a></li><li><a href="https://indoorpet.osu.edu/" target="_blank" rel="noopener">Ohio State Indoor Pet Initiative, written by veterinary behaviorists</a></li><li><a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Csibra et al. (2022), Owner and trainer ratings of the same dogs, open access</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Nickerson, R. S. (1998). Confirmation bias. <i>Review of General Psychology, 2</i>, 175&ndash;220.</li><li>Winter, L., &amp; Uleman, J. S. (1984). When are social judgments made? <i>Journal of Personality and Social Psychology, 47</i>, 237&ndash;252.</li></ul></div>
+()=>`<h1>Working through a behavioral concern</h1>
+<p class="lede">A structured tool for describing a behavioral concern, considering relevant evidence, and reconsidering your initial explanation.</p>
 <div class="emerg">
-<h3>If this is an emergency, do not use this instrument</h3>
+<h3>If this is an emergency, do not use this tool</h3>
 <p>Seek immediate veterinary attention if the animal is collapsed, having difficulty breathing, bleeding heavily, having seizures, unable to stand, or straining to urinate without producing urine.</p>
 <p>If a person has been bitten or injured, seek medical attention and follow local reporting requirements before continuing.</p>
 <ul>
@@ -445,92 +504,113 @@ const SCREENS=[
 <p class="geo">Telephone services listed are United States based. Elsewhere, contact a local veterinarian or emergency veterinary service.</p>
 </div>`,
 ()=>`<h2>Description</h2>
-<p class="goal">This section records what was observed, separately from any explanation of why it occurred. Behavioral records are more reliable when behavior is defined by observable features rather than presumed function (Burghardt et al., 2012). Recording frequency and episode duration also establishes a baseline against which subsequent change can be assessed. All fields are required.</p>
+<p class="goal">Describe what you actually saw. All fields are required.</p>
+<details class="why"><summary>Why are we asking this?</summary><div>This records what was observed, separately from any explanation of why it occurred. Behavioral records are more reliable when behavior is defined by observable features rather than presumed function (Burghardt et al., 2012). Recording frequency and episode duration also establishes a baseline against which later change can be assessed.</div></details>
 <div class="field"><span class="label">Animal and behavior</span>
-<div class="row">${sel('species',SPECIES,'dog or cat')}${sel('behavior',behaviorsFor(A.species),'behavior observed')}</div></div>
+<div class="row">${sel('species',SPECIES,'dog or cat')}${sel('behavior',behaviorsFor(A.species),'behavior observed')}</div>
+${isOther()?`<div style="margin-top:10px"><input type="text" data-name="behaviorOther" aria-label="Describe the behavior" value="${esc(A.behaviorOther||'')}" placeholder="Describe what the animal does, in observable terms"><p class="hint" style="margin-top:8px">Describe the action itself rather than what you think it means. Because this behavior is not in the list, the tool cannot suggest which environmental provisions are most relevant to it, and will not route on the behavior type alone.</p></div>`:''}</div>
 <div class="field"><span class="label">Location</span>${sel('place',PLACES,'select')}</div>
 <div class="field"><span class="label">Directed toward</span>${sel('directed',DIRECTED,'select')}</div>
 <div class="field"><span class="label">When</span>${sel('when',WHENS,'select')}</div>
 <div class="field"><span class="label">Frequency and episode duration</span>
 <div class="row">${sel('freq',FREQ,'frequency')}${sel('episode',EPISODE,'episode duration')}</div></div>
 <div class="field"><span class="label">Duration of the concern</span>${sel('duration',DURATIONS,'select')}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/behavior-management/2015_aaha_canine_and_feline_behavior_management_guidelines_final.pdf" target="_blank" rel="noopener">AAHA behavior management guidelines, full text (PDF)</a></li><li><a href="https://indoorpet.osu.edu/dogs" target="_blank" rel="noopener">Indoor Pet Initiative: normal canine behavior and development</a></li><li><a href="https://indoorpet.osu.edu/cats" target="_blank" rel="noopener">Indoor Pet Initiative: understanding cats and feline life stressors</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Burghardt, G. M., et al. (2012). Minimizing observer bias in behavioral studies. <i>Ethology, 118</i>, 511&ndash;517.</li></ul></div>`,
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/behavior-management/2015_aaha_canine_and_feline_behavior_management_guidelines_final.pdf" target="_blank" rel="noopener">AAHA behavior management guidelines, full text (PDF)</a></li><li><a href="https://indoorpet.osu.edu/dogs" target="_blank" rel="noopener">Indoor Pet Initiative: normal canine behavior and development</a></li><li><a href="https://indoorpet.osu.edu/cats" target="_blank" rel="noopener">Indoor Pet Initiative: understanding cats and feline life stressors</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Burghardt, G. M., et al. (2012). Minimizing observer bias in behavioral studies. <i>Ethology, 118</i>, 511&ndash;517.</li></ul></details>`,
 ()=>`<h2>Basis of concern</h2>
-<p class="goal">This section identifies why the behavior is considered a concern. The same behavior may be acceptable in one household but problematic in another depending on its effects on the animal, people, other animals, or the household (Blackwell et al., 2008; Mills, 2022; Fatj&oacute; &amp; Bowen, 2020). Identifying the basis of the concern helps clarify what a successful outcome should address.</p>
+<p class="goal">Why is this behavior a problem? Select everything that applies.</p>
+<details class="why"><summary>Why are we asking this?</summary><div>The same behavior may be acceptable in one household but problematic in another, depending on its effects on the animal, the people, and other animals. Owners may also observe potentially concerning behaviors without identifying or reporting them as problematic (Lord et al., 2020). Naming the basis of the concern clarifies what a successful outcome needs to address.</div></details>
 ${chips('concerns',CONCERNS)}
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://www.mdpi.com/2076-2615/10/3/383" target="_blank" rel="noopener">Fatj&oacute; and Bowen (2020), Multi-axis assessment of behavioural problems, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/12/22/3103" target="_blank" rel="noopener">Mills (2022), Clinical animal behaviour: paradigms, problems and practice, open access</a></li><li><a href="https://indoorpet.osu.edu/resources" target="_blank" rel="noopener">Indoor Pet Initiative: referral and professional resources</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Blackwell, E. J., et al. (2008). Training methods and the occurrence of behaviour problems. <i>Journal of Veterinary Behavior, 3</i>, 207&ndash;217.</li><li>&#268;ern&aacute;, P., Gardiner, H., Sordo, L., T&oslash;rnqvist-Johnsen, C., &amp; Gunn-Moore, D. A. (2020). Potential causes of increased vocalisation in elderly cats with cognitive dysfunction syndrome as assessed by their owners. <i>Animals, 10</i>, 1092. <a href="https://www.mdpi.com/2076-2615/10/6/1092" target="_blank" rel="noopener">Open access</a></li><li>Csibra, B., Bunford, N., &amp; G&aacute;csi, M. (2022). Evaluating ADHD assessment for dogs: A replication study. <i>Animals, 12</i>, 807. <a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Open access</a></li><li>Fatj&oacute;, J., &amp; Bowen, J. (2020). Making the case for multi-axis assessment of behavioural problems. <i>Animals, 10</i>, 383.</li><li>Mills, D. S. (2022). Clinical animal behaviour: Paradigms, problems and practice. <i>Animals, 12</i>, 3103.</li></ul></div>`,
-()=>`${safetyBanner()}<h2>Initial interpretation</h2>
-<p class="goal">This section records what you currently think is causing the behavior before gathering additional information. Your initial interpretation is a hypothesis, not a conclusion. How people explain companion animal behavior can influence how they respond to it (Rajecki et al., 2007), so your starting explanation will be recorded and reconsidered later.</p>
-${chips('initial',TRAITS,'interp')}
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li><li><a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Csibra et al. (2022), Owner and trainer ratings of the same dogs, open access</a></li><li><a href="https://indoorpet.osu.edu/" target="_blank" rel="noopener">Ohio State Indoor Pet Initiative, written by veterinary behaviorists</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Rajecki, D. W., Rasmussen, J. L., &amp; Conner, T. J. (2007). Punish and forgive. <i>Society &amp; Animals, 15</i>, 311&ndash;328.</li></ul></div>`,
+${has('concerns','Something else (describe)')?`<div class="field" style="margin-top:18px"><input type="text" data-name="concernOther" aria-label="Describe why this behavior is a concern" value="${esc(A.concernOther||'')}" placeholder="Describe why this is a concern"></div>`:''}
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://www.mdpi.com/2076-2615/10/3/383" target="_blank" rel="noopener">Fatj&oacute; and Bowen (2020), Multi-axis assessment of behavioural problems, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/12/22/3103" target="_blank" rel="noopener">Mills (2022), Clinical animal behaviour: paradigms, problems and practice, open access</a></li><li><a href="https://indoorpet.osu.edu/resources" target="_blank" rel="noopener">Indoor Pet Initiative: referral and professional resources</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Lord, M. S., Casey, R. A., Kinsman, R. H., Tasker, S., Knowles, T. G., Da Costa, R. E. P., Woodward, J. L., &amp; Murray, J. K. (2020). Owner perception of problem behaviours in dogs aged 6 and 9-months. <i>Applied Animal Behaviour Science, 232</i>, 105147.</li></ul></details>`,
+()=>`${safetyBanner()}<h2>Initial explanation</h2>
+<p class="goal">In your own words, what do you currently think is causing this behavior?</p>
+<p class="hint" style="margin:-18px 0 16px">If you are not sure, say so. That is a legitimate starting point and will be recorded as one.</p>
+<details class="why"><summary>Why are we asking this?</summary><div>Your initial explanation is a hypothesis, not a conclusion. People often begin forming an explanation while the behavior is still being observed, sometimes without realizing it (Winter &amp; Uleman, 1984), and an explanation already held can influence which information is noticed or sought afterward (Nickerson, 1998). How people explain companion animal behavior can also influence how they respond to it (Rajecki et al., 2007). This tool records your explanation now, before gathering further information, and returns to it later so it can be compared against what you find.</div></details>
+<div class="field"><textarea data-name="initialText" aria-label="What do you currently think is causing this behavior?" placeholder="">${esc(A.initialText||'')}</textarea></div>
+<div class="field"><span class="label">Or select any that fit</span>
+<p class="hint">Select as many as apply. Answer in the box above, here, or both.</p>
+${chips('initial',TRAITS,'interp')}</div>
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li><li><a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Csibra et al. (2022), Owner and trainer ratings of the same dogs, open access</a></li><li><a href="https://indoorpet.osu.edu/" target="_blank" rel="noopener">Ohio State Indoor Pet Initiative, written by veterinary behaviorists</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Rajecki, D. W., Rasmussen, J. L., &amp; Conner, T. J. (2007). Punish and forgive. <i>Society &amp; Animals, 15</i>, 311&ndash;328.</li></ul></details>`,
 ()=>{const sp=A.species||'animal';return `${safetyBanner()}<h2>Species repertoire</h2>
-<p class="goal">This section asks whether the behavior is part of the species&rsquo; typical behavioral repertoire. Species-typical behaviors are behaviors normally expressed by dogs or cats, such as scratching, chewing, digging, vocalizing, marking, hiding, or predatory behavior (AAHA, 2015). A species-typical behavior can still become a concern because of where, when, how often, or how intensely it occurs.</p><p class="goal" style="border-bottom:none;padding-bottom:0;margin-bottom:14px">Species-atypical behaviors are behaviors that are not ordinarily part of the species&rsquo; expected repertoire or are expressed in an unusual form or context. An unfamiliar or unusual behavior should not automatically be considered abnormal, but it may warrant further investigation.</p><p class="goal" style="border-bottom:none;padding-bottom:0;margin-bottom:14px">Stereotypic behaviors are a different category. They are repetitive, relatively invariant behaviors with no obvious immediate goal or function. Their presence can be associated with restricted environments, frustration, stress, or other welfare concerns and warrants closer evaluation.</p><p class="goal">The key distinction is: species-typical describes what animals of that species normally do; species-atypical describes behavior outside the expected repertoire or pattern; stereotypic describes a particular repetitive pattern of behavior.</p>
+<p class="goal">Is this behavior part of what dogs or cats normally do?</p>
+<details class="why"><summary>What the categories mean</summary><div><strong>Species-typical</strong> describes what animals of that species normally do, such as scratching, chewing, digging, vocalizing, marking, hiding, or predatory behavior (AAHA, 2015). A species-typical behavior can still become a concern because of where, when, how often, or how intensely it occurs.<br><br><strong>Species-atypical</strong> describes behavior outside the expected repertoire, or expressed in an unusual form or context. An unfamiliar behavior should not automatically be considered abnormal, but it may warrant further investigation.<br><br><strong>Stereotypic</strong> describes repetitive, relatively invariant behavior with no obvious immediate goal or function. It can be associated with restricted environments, frustration, stress, or other welfare concerns and warrants closer evaluation.</div></details>
 <div class="field"><span class="label">Classification of the observed behavior</span>
 ${chips('typical',['Yes, species-typical','No, outside the expected repertoire','Repetitive and apparently without function','I am not sure'])}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://indoorpet.osu.edu/dogs" target="_blank" rel="noopener">Indoor Pet Initiative: normal canine behavior and development</a></li><li><a href="https://indoorpet.osu.edu/cats" target="_blank" rel="noopener">Indoor Pet Initiative: understanding cats and feline life stressors</a></li><li><a href="https://catvets.com/resource/feline-behavior-guidelines/" target="_blank" rel="noopener">AAFP Feline Behavior Guidelines</a></li><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Hammerle, M., et al. (2015). 2015 AAHA canine and feline behavior management guidelines. <i>Journal of the American Animal Hospital Association, 51</i>, 205&ndash;221.</li></ul></div>`},
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://indoorpet.osu.edu/dogs" target="_blank" rel="noopener">Indoor Pet Initiative: normal canine behavior and development</a></li><li><a href="https://indoorpet.osu.edu/cats" target="_blank" rel="noopener">Indoor Pet Initiative: understanding cats and feline life stressors</a></li><li><a href="https://catvets.com/resource/feline-behavior-guidelines/" target="_blank" rel="noopener">AAFP Feline Behavior Guidelines</a></li><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Hammerle, M., et al. (2015). 2015 AAHA canine and feline behavior management guidelines. <i>Journal of the American Animal Hospital Association, 51</i>, 205&ndash;221.</li></ul></details>`},
 ()=>`${safetyBanner()}<h2>Change from baseline</h2>
-<p class="goal">This section asks whether the behavior has changed from what is normal for this individual and whether anything in the animal&rsquo;s environment or routine has changed. A behavior that is new or has changed substantially in frequency, intensity, duration, or context may increase concern for a possible physical or medical contribution (Camps et al., 2019).</p>
+<p class="goal">Has this changed from what is normal for this individual animal?</p>
+<details class="why"><summary>Why are we asking this?</summary><div>A behavior that is new, or that has changed substantially in frequency, intensity, duration, or context, raises the possibility of a physical or medical contribution (Camps et al., 2019). Changes in the household or routine can also be relevant, so both are recorded here.</div></details>
 ${chips('changed',CHANGED)}
 <div class="field" style="margin-top:24px"><span class="label">Household change</span>
 ${chips('household',HOUSEHOLD)}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://www.mdpi.com/2076-2615/9/12/1133" target="_blank" rel="noopener">Camps et al. (2019), Medical conditions and behavioral problems, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/10/6/1092" target="_blank" rel="noopener">&#268;ern&aacute; et al. (2020), Owner-assessed causes of vocalization in elderly cats, open access</a></li><li><a href="https://www.aaha.org/resources/pain-management-for-pets/" target="_blank" rel="noopener">AAHA: recognizing signs of pain in dogs and cats</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Camps, T., Amat, M., &amp; Manteca, X. (2019). A review of medical conditions and behavioral problems in dogs and cats. <i>Animals, 9</i>, 1133.</li></ul></div>`,
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://www.mdpi.com/2076-2615/9/12/1133" target="_blank" rel="noopener">Camps et al. (2019), Medical conditions and behavioral problems, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/10/6/1092" target="_blank" rel="noopener">&#268;ern&aacute; et al. (2020), Owner-assessed causes of vocalization in elderly cats, open access</a></li><li><a href="https://www.aaha.org/resources/pain-management-for-pets/" target="_blank" rel="noopener">AAHA: recognizing signs of pain in dogs and cats</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Camps, T., Amat, M., &amp; Manteca, X. (2019). A review of medical conditions and behavioral problems in dogs and cats. <i>Animals, 9</i>, 1133.</li></ul></details>`,
 ()=>{const sp=A.species==='cat'?NEEDS_CAT:A.species==='dog'?NEEDS_DOG:[];
 return `${safetyBanner()}<h2>Context and provision</h2>
-<p class="goal">This section looks at what happens before and after the behavior and what the animal has access to when and where the behavior occurs. Antecedents and consequences can help identify patterns that may be maintaining the behavior. Appropriate resources also need to be available in the right place, at the right time, and in a form the animal will use. For example, cats show preferences for different scratching substrates and orientations, and providing suitable scratching options can reduce inappropriate scratching (Wilson et al., 2016; Zhang &amp; McGlone, 2020).</p>
+<p class="goal">What happens around the behavior, and what does the animal have access to?</p>
+<details class="why"><summary>Why are we asking this?</summary><div>What immediately precedes and follows a behavior can identify patterns that may be maintaining it, though it does not establish that on its own. Resources also need to be available in the right place, at the right time, and in a form the animal will actually use. Cats, for example, show preferences for particular scratching substrates and orientations, and providing suitable options is associated with where they direct scratching (Wilson et al., 2016; Zhang &amp; McGlone, 2020).</div></details>
 <div class="field"><span class="label">Immediately preceding</span>${chips('before',BEFORE)}</div>
 <div class="field"><span class="label">Immediately following</span>${chips('after',AFTER)}</div>
 <div class="field"><span class="label">Contexts of absence</span>
 <p class="hint">Situations in which the behavior might be expected but does not occur are often more informative than those in which it does. Consider rooms where it never happens, people whose presence coincides with its absence, times of day when it does not occur, and periods when it stopped.</p>
-<textarea data-name="absent" placeholder="e.g. never in the kitchen; never when a second person is home; absent for two weeks after a routine change">${A.absent||''}</textarea></div>
+<textarea data-name="absent" placeholder="e.g. never in the kitchen; never when a second person is home; absent for two weeks after a routine change">${esc(A.absent||'')}</textarea></div>
 <div class="field"><span class="label">Reliably available to this animal</span>
-<p class="hint">Answer each one. Availability means at the relevant place and time, not merely present somewhere in the household. Items marked as relevant to the reported behavior are noted.</p>
-${triple('prov',provisionList(),relevantFor())}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://catvets.com/resource/aafp-isfm-environmental-needs-guidelines/" target="_blank" rel="noopener">AAFP and ISFM Feline Environmental Needs Guidelines</a></li><li><a href="https://journals.sagepub.com/doi/full/10.1177/1098612x13477537" target="_blank" rel="noopener">Feline Environmental Needs Guidelines, full text</a></li><li><a href="https://catvets.com/resource/meeting-the-needs-of-indoor-cats-position-statement/" target="_blank" rel="noopener">AAFP: meeting the physical and emotional needs of indoor cats</a></li><li><a href="https://indoorpet.osu.edu/cats" target="_blank" rel="noopener">Indoor Pet Initiative: understanding cats and feline life stressors</a></li><li><a href="https://indoorpet.osu.edu/dogs" target="_blank" rel="noopener">Indoor Pet Initiative: normal canine behavior and development</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Wilson, C., et al. (2016). Owner observations regarding cat scratching behavior. <i>Journal of Feline Medicine and Surgery</i>.</li><li>Zhang, L., &amp; McGlone, J. (2020). Scratcher preferences of adult in-home cats. <i>Applied Animal Behaviour Science</i>.</li></ul></div>`},
+<p class="hint">Availability means at the relevant place and time, not merely present somewhere in the household.</p>
+${(()=>{const rel=relevantFor(), all=provisionList(), rest=all.filter(x=>!rel.includes(x));
+  return (rel.length?`<p class="hint" style="margin-bottom:6px">Relevant to ${esc(behaviorLabel())}. Please answer these.</p>`+triple('prov',rel,rel):'')
+   + (rest.length?`<details class="why"${rel.length?'':' open'}><summary>${rel.length?'Other environmental considerations':'Environmental considerations'}</summary><div style="padding-top:4px">`+triple('prov',rest,[])+`</div></details>`:'');
+})()}</div>
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://catvets.com/resource/aafp-isfm-environmental-needs-guidelines/" target="_blank" rel="noopener">AAFP and ISFM Feline Environmental Needs Guidelines</a></li><li><a href="https://journals.sagepub.com/doi/full/10.1177/1098612x13477537" target="_blank" rel="noopener">Feline Environmental Needs Guidelines, full text</a></li><li><a href="https://catvets.com/resource/meeting-the-needs-of-indoor-cats-position-statement/" target="_blank" rel="noopener">AAFP: meeting the physical and emotional needs of indoor cats</a></li><li><a href="https://indoorpet.osu.edu/cats" target="_blank" rel="noopener">Indoor Pet Initiative: understanding cats and feline life stressors</a></li><li><a href="https://indoorpet.osu.edu/dogs" target="_blank" rel="noopener">Indoor Pet Initiative: normal canine behavior and development</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Wilson, C., et al. (2016). Owner observations regarding cat scratching behavior. <i>Journal of Feline Medicine and Surgery</i>.</li><li>Zhang, L., &amp; McGlone, J. (2020). Scratcher preferences of adult in-home cats. <i>Applied Animal Behaviour Science</i>.</li></ul></details>`},
 ()=>{const mt=presentationWarrantsMedical();
 return `${safetyBanner()}<h2>Physical contribution</h2>
-<p class="goal">This section asks whether pain, illness, or another physical condition could be contributing to the behavior. Physical conditions are common in animals referred for behavioral concerns and may not be recognized by caregivers (Mills et al., 2020; Camps et al., 2019). Not noticing physical signs does not rule out a medical contribution.</p>
+<p class="goal">Have you noticed any physical changes since this started?</p>
+<details class="why"><summary>Why are we asking this?</summary><div>Physical conditions are common in animals referred for behavioral concerns and often go unrecognized by caregivers (Mills et al., 2020; Camps et al., 2019). Not noticing physical signs does not rule out a medical contribution, which is why the question is asked regardless of what you have observed.</div></details>
 ${mt?`<div class="flag"><strong>Veterinary consideration indicated by presentation</strong>${medicalReason()} Absence of recognized signs does not exclude a medical contribution.</div>`:''}
 <div class="field"><span class="label">Signs observed since onset</span>
 ${chips('signs',SIGNS)}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://www.aaha.org/resources/pain-management-for-pets/" target="_blank" rel="noopener">AAHA: recognizing signs of pain in dogs and cats</a></li><li><a href="https://www.aaha.org/resources/2022-aaha-pain-management-guidelines-for-dogs-and-cats/" target="_blank" rel="noopener">AAHA Pain Management Guidelines for Dogs and Cats (2022)</a></li><li><a href="https://www.mdpi.com/2076-2615/10/2/318" target="_blank" rel="noopener">Mills et al. (2020), Pain and problem behavior in cats and dogs, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/9/12/1133" target="_blank" rel="noopener">Camps et al. (2019), Medical conditions and behavioral problems, open access</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Camps, T., Amat, M., &amp; Manteca, X. (2019). A review of medical conditions and behavioral problems in dogs and cats. <i>Animals, 9</i>, 1133.</li><li>Mills, D. S., Demontigny-B&eacute;dard, I., Gruen, M., Klinck, M. P., McPeake, K. J., Barcelos, A. M., Hewison, L., Van Haevermaet, H., Denenberg, S., Hauser, H., Koch, C., Ballantyne, K., Wilson, C., Mathkari, C. V., Pounder, J., Garcia, E., Darder, P., Fatj&oacute;, J., &amp; Levine, E. (2020). Pain and problem behavior in cats and dogs. <i>Animals, 10</i>(2), 318. https://doi.org/10.3390/ani10020318</li></ul></div>`},
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://www.aaha.org/resources/pain-management-for-pets/" target="_blank" rel="noopener">AAHA: recognizing signs of pain in dogs and cats</a></li><li><a href="https://www.aaha.org/resources/2022-aaha-pain-management-guidelines-for-dogs-and-cats/" target="_blank" rel="noopener">AAHA Pain Management Guidelines for Dogs and Cats (2022)</a></li><li><a href="https://www.mdpi.com/2076-2615/10/2/318" target="_blank" rel="noopener">Mills et al. (2020), Pain and problem behavior in cats and dogs, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/9/12/1133" target="_blank" rel="noopener">Camps et al. (2019), Medical conditions and behavioral problems, open access</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Camps, T., Amat, M., &amp; Manteca, X. (2019). A review of medical conditions and behavioral problems in dogs and cats. <i>Animals, 9</i>, 1133.</li><li>Mills, D. S., Demontigny-B&eacute;dard, I., Gruen, M., Klinck, M. P., McPeake, K. J., Barcelos, A. M., Hewison, L., Van Haevermaet, H., Denenberg, S., Hauser, H., Koch, C., Ballantyne, K., Wilson, C., Mathkari, C. V., Pounder, J., Garcia, E., Darder, P., Fatj&oacute;, J., &amp; Levine, E. (2020). Pain and problem behavior in cats and dogs. <i>Animals, 10</i>(2), 318. https://doi.org/10.3390/ani10020318</li></ul></details>`},
 ()=>`${safetyBanner()}<h2>Affective and clinical contribution</h2>
-<p class="goal">This section asks whether fear, frustration, anxiety, or another behavioral or emotional condition could be contributing to the behavior. Similar behaviors can occur during different affective states, and even clinical animal behaviorists do not always agree when distinguishing between them (Wilson et al., 2024). These observations can identify a reason for further assessment, but they do not establish a diagnosis. When several explanations appear possible or the answer is unclear, professional assessment may be appropriate.</p>
+<p class="goal">Have you observed any of these patterns?</p>
+<details class="why"><summary>Why are we asking this?</summary><div>Fear, frustration, anxiety, or another emotional or behavioral condition may be contributing. Similar behaviors can occur during different affective states, and clinical animal behaviorists vary in how they conceptualize and differentiate them (Wilson et al., 2024). These observations can identify a reason for further assessment, but they do not establish a diagnosis. Where several explanations appear possible, or the answer is unclear, professional assessment may be appropriate.</div></details>
 <div class="field"><span class="label">Observed patterns</span>
 ${chips('clinical',CLINICAL)}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://indoorpet.osu.edu/resources" target="_blank" rel="noopener">Indoor Pet Initiative: referral and professional resources</a></li><li><a href="https://avsab.org/wp-content/uploads/2021/08/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf" target="_blank" rel="noopener">AVSAB Position Statement on Humane Dog Training (2021, PDF)</a></li><li><a href="https://catvets.com/resource/feline-behavior-guidelines/" target="_blank" rel="noopener">AAFP Feline Behavior Guidelines</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Wilson, B. M., Soulsbury, C. D., &amp; Mills, D. S. (2024). Problem behaviours and relinquishment. <i>Animals, 14</i>, 2718.</li></ul></div>`,
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://indoorpet.osu.edu/resources" target="_blank" rel="noopener">Indoor Pet Initiative: referral and professional resources</a></li><li><a href="https://avsab.org/wp-content/uploads/2021/08/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf" target="_blank" rel="noopener">AVSAB Position Statement on Humane Dog Training (2021, PDF)</a></li><li><a href="https://catvets.com/resource/feline-behavior-guidelines/" target="_blank" rel="noopener">AAFP Feline Behavior Guidelines</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Wilson, B. M., Soulsbury, C. D., &amp; Mills, D. S. (2024). Problem behaviours and relinquishment. <i>Animals, 14</i>, 2718.</li></ul></details>`,
 ()=>{
 const sig=JSON.stringify([A.behavior,A.directed,A.typical,A.changed,A.household,A.signs,A.clinical,A.before,A.after,A.prov,A.concerns]);
 if(!A.explanations||A._sig!==sig){A.explanations=inferred();A._sig=sig;}
 const rel=relevantFor().filter(r=>(A.prov||{})[r]==='no');
 return `${safetyBanner()}<h2>Candidate explanations</h2>
-<p class="goal">This section asks which explanations best fit the information you have recorded. Explanations that are consistent with your answers are suggested, but you can remove those that do not fit or add others. Labels such as spiteful, stubborn, mischievous, dominant, or mad at me describe an assumed intention or characteristic rather than identifying the conditions producing the behavior (AVSAB, 2021). A useful explanation should help account for why the behavior occurs when and where it does and point toward something that can be further evaluated.</p>
-${rel.length?`<div class="note">Opportunities relevant to ${A.behavior} recorded as unavailable or inadequate: ${rel.join('; ').toLowerCase()}.</div>`:''}
+<p class="goal">Which explanations fit what you have recorded? Add or remove any.</p>
+<details class="why"><summary>What makes an explanation useful here?</summary><div>Explanations consistent with your answers are suggested, but you can remove those that do not fit and add others. Labels such as spiteful, stubborn, mischievous, dominant, or mad at me describe an assumed intention or characteristic rather than identifying the conditions producing the behavior. A useful explanation should account for why the behavior occurs when and where it does, and point toward something that can be evaluated further.</div></details>
+${rel.length?`<div class="note">Opportunities relevant to ${esc(behaviorLabel())} recorded as unavailable or inadequate: ${rel.join('; ').toLowerCase()}.</div>`:''}
 <div class="field"><span class="label">Candidate explanations</span>
 ${chips('explanations',EXPLANATIONS,'evid')}</div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://avsab.org/wp-content/uploads/2021/08/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf" target="_blank" rel="noopener">AVSAB Position Statement on Humane Dog Training (2021, PDF)</a></li><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li><li><a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/behavior-management/2015_aaha_canine_and_feline_behavior_management_guidelines_final.pdf" target="_blank" rel="noopener">AAHA behavior management guidelines, full text (PDF)</a></li><li><a href="https://catvets.com/resource/feline-behavior-guidelines/" target="_blank" rel="noopener">AAFP Feline Behavior Guidelines</a></li></ul><h4>Cited above</h4><ul class="cited"><li>American Veterinary Society of Animal Behavior. (2021). <i>Position statement on humane dog training</i>.</li></ul></div>`},
-()=>{const init=(A.initial||[]).join('; ')||'not recorded';
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://avsab.org/wp-content/uploads/2021/08/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf" target="_blank" rel="noopener">AVSAB Position Statement on Humane Dog Training (2021, PDF)</a></li><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li><li><a href="https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/behavior-management/2015_aaha_canine_and_feline_behavior_management_guidelines_final.pdf" target="_blank" rel="noopener">AAHA behavior management guidelines, full text (PDF)</a></li><li><a href="https://catvets.com/resource/feline-behavior-guidelines/" target="_blank" rel="noopener">AAFP Feline Behavior Guidelines</a></li></ul></details>`},
+()=>{const initSel=(A.initial||[]).join('; ');
+const init=[(A.initialText||'').trim()?'&ldquo;'+esc(A.initialText.trim())+'&rdquo;':'',initSel].filter(Boolean).join('<br><br>')||'not recorded';
 const exps=(A.explanations||[]);
-const stands=has('verdict','Yes, my original explanation still fits best');
+const stands=has('verdict','Retain: my initial explanation still fits best');
 return `${safetyBanner()}<h2>Comparison</h2>
-<p class="goal">This section asks you to compare your initial explanation with the information you have gathered. A useful explanation should account for the pattern of behavior, including why it happens in this context, at this time, toward this target, and not in other situations. Explanations based on assumed intentions can often fit many different observations, which makes them difficult to test (Horowitz, 2009). Reconsider your initial explanation and decide whether the evidence supports it, only partly supports it, or points toward another explanation.</p>
+<p class="goal">Does your initial explanation still fit what you found?</p>
+<details class="why"><summary>What counts as a good fit?</summary><div>An explanation should account for the pattern of the behavior, including why it happens in this context, at this time, toward this target, and not in other situations. Explanations based on assumed intentions can fit many different observations at once, which is what makes them difficult to test (Horowitz, 2009). Decide whether the evidence supports your initial explanation, supports part of it, or points toward another.</div></details>
 <div class="tablewrap"><table class="compare">
-<thead><tr><th class="h-i">Initial interpretation</th><th class="h-e">Explanations identified after review</th></tr></thead>
+<thead><tr><th class="h-i">Initial explanation</th><th class="h-e">Explanations identified after review</th></tr></thead>
 <tbody><tr><td class="h-i">${init}</td>
 <td class="h-e">${exps.length?'<ul>'+exps.map(e=>`<li>${e}</li>`).join('')+'</ul>':'not recorded'}</td></tr></tbody>
 </table></div>
-<p class="caption"><em>Table 1.</em> Initial interpretation compared with explanations identified after review of the recorded evidence.</p>
-<div class="field"><span class="label">Adequacy of the initial interpretation</span>
-${chips('verdict',['Yes, my original explanation still fits best','It may explain part of the pattern','It does not explain the pattern well','I would explain it differently now'])}</div>
+<p class="caption"><em>Table 1.</em> Initial explanation compared with explanations identified after review of the recorded evidence.</p>
+<div class="field"><span class="label">Adequacy of the initial explanation</span>
+${chips('verdict',['Retain: my initial explanation still fits best','Narrow: it explains part of the pattern but not all of it','Revise: I would explain it differently now','Uncertain: the evidence does not distinguish between explanations'])}</div>
 ${stands?`<div class="field"><span class="label">Support for the retained explanation</span>
 <p class="hint">Which observation favors this explanation over the alternatives?</p>
-<textarea data-name="defence" placeholder="">${A.defence||''}</textarea>
+<textarea data-name="defence" placeholder="">${esc(A.defence||'')}</textarea>
 <p class="hint" style="margin-top:12px">What observation would be expected if it were correct, but not otherwise?</p>
-<textarea data-name="prediction" placeholder="">${A.prediction||''}</textarea></div>`:''}
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Csibra et al. (2022), Owner and trainer ratings of the same dogs, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/12/22/3103" target="_blank" rel="noopener">Mills (2022), Clinical animal behaviour: paradigms, problems and practice, open access</a></li><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Horowitz, A. (2009). Disambiguating the &ldquo;guilty look&rdquo;. <i>Behavioural Processes, 81</i>, 447&ndash;452.</li></ul></div>`},
+<textarea data-name="prediction" placeholder="">${esc(A.prediction||'')}</textarea></div>`:''}
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Csibra et al. (2022), Owner and trainer ratings of the same dogs, open access</a></li><li><a href="https://www.mdpi.com/2076-2615/12/22/3103" target="_blank" rel="noopener">Mills (2022), Clinical animal behaviour: paradigms, problems and practice, open access</a></li><li><a href="https://avsab.org/resources/position-statements/" target="_blank" rel="noopener">AVSAB position statements, including dominance in dog training</a></li></ul><h4>Cited above</h4><ul class="cited"><li>Horowitz, A. (2009). Disambiguating the &ldquo;guilty look&rdquo;. <i>Behavioural Processes, 81</i>, 447&ndash;452.</li></ul></details>`},
 ()=>{const exps=A.explanations||[];
 return `<h2>Action plan</h2>
-<p class="goal">This section turns the explanations supported by your evidence into a specific plan and defines what improvement will look like. Choose actions that address the factors you identified and decide in advance what will change, when you will start, and how you will measure progress. If several changes are made at the same time, improvement may show that the overall plan helped, but it cannot tell you which change was responsible or confirm that your explanation was correct.</p>
-${exps.length?`<div class="note"><strong>Indicated responses</strong><ul>${exps.map(e=>`<li>${PLANS[e]}</li>`).join('')}</ul></div>`:'<div class="note">No explanations retained. No action plan can be derived.</div>'}
+<p class="goal">Decide what will change, who will do it, and how you will know whether it worked.</p>
+<details class="why"><summary>Why define improvement in advance?</summary><div>Setting the criterion before you act keeps the outcome from being judged after the fact. If several changes are made at the same time, improvement may show that the overall plan helped, but it cannot tell you which change was responsible or confirm that your explanation was correct.</div></details>
+${exps.length?`<div class="note"><strong>Next steps to consider</strong><ul>${exps.map(e=>`<li>${PLANS[e]}</li>`).join('')}</ul></div>`:'<div class="note">No explanations retained. No action plan can be derived.</div>'}
 <div class="field"><span class="label">Responsibility and start date</span>
 <input type="text" data-name="who" value="${esc(A.who||'')}" placeholder=""></div>
 <div class="field"><span class="label">Criterion for improvement</span>
@@ -538,31 +618,33 @@ ${exps.length?`<div class="note"><strong>Indicated responses</strong><ul>${exps.
 <input type="text" data-name="better" value="${esc(A.better||'')}" placeholder=""></div>
 <div class="field"><span class="label">Reassessment date</span>
 <input type="text" data-name="check" value="${esc(A.check||'')}" placeholder=""></div>
-<div class="refs"><h4>Further information</h4><ul><li><a href="https://indoorpet.osu.edu/resources" target="_blank" rel="noopener">Indoor Pet Initiative: referral and professional resources</a></li><li><a href="https://avsab.org/wp-content/uploads/2021/08/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf" target="_blank" rel="noopener">AVSAB Position Statement on Humane Dog Training (2021, PDF)</a></li><li><a href="https://www.aaha.org/resources/2015-aaha-canine-and-feline-behavior-management-guidelines/" target="_blank" rel="noopener">AAHA Canine and Feline Behavior Management Guidelines (2015)</a></li><li><a href="https://catvets.com/clinical-resources/practice-guidelines/" target="_blank" rel="noopener">AAFP practice guidelines, including house-soiling and intercat tension</a></li></ul></div>`},
+<details class="refs"><summary>Evidence &amp; sources</summary><h4>Further information</h4><ul><li><a href="https://indoorpet.osu.edu/resources" target="_blank" rel="noopener">Indoor Pet Initiative: referral and professional resources</a></li><li><a href="https://avsab.org/wp-content/uploads/2021/08/AVSAB-Humane-Dog-Training-Position-Statement-2021.pdf" target="_blank" rel="noopener">AVSAB Position Statement on Humane Dog Training (2021, PDF)</a></li><li><a href="https://www.aaha.org/resources/2015-aaha-canine-and-feline-behavior-management-guidelines/" target="_blank" rel="noopener">AAHA Canine and Feline Behavior Management Guidelines (2015)</a></li><li><a href="https://catvets.com/clinical-resources/practice-guidelines/" target="_blank" rel="noopener">AAFP practice guidelines, including house-soiling and intercat tension</a></li></ul></details>`},
 ()=>{
-const line=`${A.species||'animal'} ${A.behavior||''}, ${A.place||'location not recorded'}, ${A.when||''}; ${A.freq||'frequency not recorded'}, ${A.episode||''}; ongoing ${A.duration||'unknown'}`;
+const line=`${A.species||'animal'} ${esc(behaviorLabel())}, ${A.place||'location not recorded'}, ${A.when||''}; ${A.freq||'frequency not recorded'}, ${A.episode||''}; ongoing ${A.duration||'unknown'}`;
 return `<h2>Record</h2>
-<p class="goal">This section summarizes what you observed, the explanations you considered, and the plan developed from them. Improvement does not necessarily confirm that an explanation was correct, particularly when several changes are made at the same time. If the behavior changes, does not improve, or new information becomes available, return to the beginning and reassess the concern.</p>
+<p class="goal">A record of what you observed, considered, and decided.</p>
+<details class="why"><summary>How to use this record</summary><div>Improvement does not necessarily confirm that an explanation was correct, particularly when several changes were made at the same time. If the behavior changes, does not improve, or new information becomes available, return to the beginning and reassess the concern using this record as your starting point.</div></details>
 ${safetyTriggered()?`<div class="flag"><strong>Safety</strong>${selfInjuryRisk()&&!anyOf('concerns',SAFETY_CONCERNS)?'Patterns were recorded that carry a risk of injury to the animal itself.':'A risk to a person or another animal was recorded.'} Do not test or recreate the situation. Arrange veterinary and qualified behavioral assistance.</div>`:''}
 ${medicalTriggered()?`<div class="flag"><strong>Veterinary assessment indicated</strong>Physical signs or a behavioral presentation were recorded for which a possible medical contribution should be assessed.</div>`:''}
 ${behavioralTriggered()?`<div class="flag"><strong>Professional behavioral assessment should be considered</strong>Patterns were recorded that may warrant assessment by a veterinary behaviorist or qualified behavior professional, alongside veterinary input where appropriate.</div>`:''}
 <div class="summary">
 <div class="sumrow"><div class="sumkey">Behavior</div><div class="sumval">${line}</div></div>
 <div class="sumrow"><div class="sumkey">Directed toward</div><div class="sumval">${A.directed||'not recorded'}</div></div>
+<div class="sumrow"><div class="sumkey">Contexts of absence</div><div class="sumval">${esc((A.absent||'').trim())||'not recorded'}</div></div>
 <div class="sumrow"><div class="sumkey">Basis of concern</div><div class="sumval">${(A.concerns||[]).join(', ')||'not recorded'}</div></div>
-<div class="sumrow"><div class="sumkey">Initial interpretation</div><div class="sumval" style="color:var(--interp)">${(A.initial||[]).join(', ')||'not recorded'}</div></div>
+<div class="sumrow"><div class="sumkey">Initial explanation</div><div class="sumval" style="color:var(--interp)">${[(A.initialText||'').trim()?'&ldquo;'+esc(A.initialText.trim())+'&rdquo;':'',(A.initial||[]).join(', ')].filter(Boolean).join('<br>')||'not recorded'}</div></div>
 <div class="sumrow"><div class="sumkey">Explanations retained</div><div class="sumval" style="color:var(--evid)">${(A.explanations||[]).join('; ')||'not recorded'}</div></div>
-<div class="sumrow"><div class="sumkey">Adequacy of initial interpretation</div><div class="sumval">${(A.verdict||[]).join(', ')||'not recorded'}${A.defence?'<br>Supporting observation: '+A.defence:''}${A.prediction?'<br>Testable prediction: '+A.prediction:''}</div></div>
-<div class="sumrow"><div class="sumkey">Plan</div><div class="sumval">${A.who||'not recorded'}<br>Criterion for improvement: ${A.better||'not recorded'}<br>Reassessment: ${A.check||'not recorded'}</div></div>
+<div class="sumrow"><div class="sumkey">Adequacy of initial explanation</div><div class="sumval">${(A.verdict||[]).join(', ')||'not recorded'}${A.defence?'<br>Supporting observation: '+esc(A.defence):''}${A.prediction?'<br>Testable prediction: '+esc(A.prediction):''}</div></div>
+<div class="sumrow"><div class="sumkey">Plan</div><div class="sumval">${esc(A.who||'')||'not recorded'}<br>Criterion for improvement: ${esc(A.better||'')||'not recorded'}<br>Reassessment: ${esc(A.check||'')||'not recorded'}</div></div>
 </div>
 <div class="refs"><h4>References</h4><ul class="cited">
 <li>American Veterinary Society of Animal Behavior. (2021). <i>Position statement on humane dog training</i>.</li>
-<li>Blackwell, E. J., Twells, C., Seawright, A., &amp; Casey, R. A. (2008). The relationship between training methods and the occurrence of behaviour problems. <i>Journal of Veterinary Behavior, 3</i>, 207&ndash;217.</li>
 <li>Burghardt, G. M., et al. (2012). Minimizing observer bias in behavioral studies. <i>Ethology, 118</i>, 511&ndash;517.</li>
 <li>Camps, T., Amat, M., &amp; Manteca, X. (2019). A review of medical conditions and behavioral problems in dogs and cats. <i>Animals, 9</i>, 1133. <a href="https://www.mdpi.com/2076-2615/9/12/1133" target="_blank" rel="noopener">Open access</a></li>
 <li>&#268;ern&aacute;, P., Gardiner, H., Sordo, L., T&oslash;rnqvist-Johnsen, C., &amp; Gunn-Moore, D. A. (2020). Potential causes of increased vocalisation in elderly cats with cognitive dysfunction syndrome as assessed by their owners. <i>Animals, 10</i>, 1092. <a href="https://www.mdpi.com/2076-2615/10/6/1092" target="_blank" rel="noopener">Open access</a></li><li>Csibra, B., Bunford, N., &amp; G&aacute;csi, M. (2022). Evaluating ADHD assessment for dogs: A replication study. <i>Animals, 12</i>, 807. <a href="https://www.mdpi.com/2076-2615/12/7/807" target="_blank" rel="noopener">Open access</a></li><li>Fatj&oacute;, J., &amp; Bowen, J. (2020). Making the case for multi-axis assessment of behavioural problems. <i>Animals, 10</i>, 383. <a href="https://www.mdpi.com/2076-2615/10/3/383" target="_blank" rel="noopener">Open access</a></li>
 <li>Hammerle, M., et al. (2015). 2015 AAHA canine and feline behavior management guidelines. <i>Journal of the American Animal Hospital Association, 51</i>, 205&ndash;221. <a href="https://www.aaha.org/resources/2015-aaha-canine-and-feline-behavior-management-guidelines/" target="_blank" rel="noopener">Guidelines</a></li>
 <li>Horowitz, A. (2009). Disambiguating the &ldquo;guilty look&rdquo;: Salient prompts to a familiar dog behaviour. <i>Behavioural Processes, 81</i>, 447&ndash;452.</li>
+<li>Lord, M. S., Casey, R. A., Kinsman, R. H., Tasker, S., Knowles, T. G., Da Costa, R. E. P., Woodward, J. L., &amp; Murray, J. K. (2020). Owner perception of problem behaviours in dogs aged 6 and 9-months. <i>Applied Animal Behaviour Science, 232</i>, 105147.</li>
 <li>Mills, D. S. (2022). Clinical animal behaviour: Paradigms, problems and practice. <i>Animals, 12</i>, 3103. <a href="https://www.mdpi.com/2076-2615/12/22/3103" target="_blank" rel="noopener">Open access</a></li>
 <li>Mills, D. S., Demontigny-B&eacute;dard, I., Gruen, M., Klinck, M. P., McPeake, K. J., Barcelos, A. M., Hewison, L., Van Haevermaet, H., Denenberg, S., Hauser, H., Koch, C., Ballantyne, K., Wilson, C., Mathkari, C. V., Pounder, J., Garcia, E., Darder, P., Fatj&oacute;, J., &amp; Levine, E. (2020). Pain and problem behavior in cats and dogs. <i>Animals, 10</i>(2), 318. https://doi.org/10.3390/ani10020318 <a href="https://www.mdpi.com/2076-2615/10/2/318" target="_blank" rel="noopener">Open access</a></li>
 <li>Nickerson, R. S. (1998). Confirmation bias: A ubiquitous phenomenon in many guises. <i>Review of General Psychology, 2</i>, 175&ndash;220.</li>
@@ -581,23 +663,24 @@ function render(){
   try{ el.innerHTML=SCREENS[step](); }
   catch(e){ el.innerHTML='<h2>Something went wrong</h2><p class="lede">'+e.message+'</p>'; }
   try{ window.scrollTo(0,0); }catch(e){}
-  try{ prog.textContent = step===0?'':step+' / 12'; }catch(e){}
+  try{ prog.textContent = STAGES[step]||''; }catch(e){}
 
   el.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
     const g=c.closest('.chips'), n=g.dataset.name, v=c.dataset.v;
     A[n]=A[n]||[];
-    if(['typical','verdict','initial'].includes(n)){
+    if(['typical','verdict'].includes(n)){
       A[n]=[v]; g.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
       c.setAttribute('aria-pressed','true');
+      syncNext();
       if(n==='verdict') render();
     } else {
       const i=A[n].indexOf(v);
       if(i>-1){A[n].splice(i,1);c.setAttribute('aria-pressed','false')}
       else{A[n].push(v);c.setAttribute('aria-pressed','true')}
+      syncNext();
+      // reveal or hide the free-text field that accompanies an 'other' option
+      if(n==='concerns' && v==='Something else (describe)'){ render(); return; }
       // a 'none' option cannot coexist with a positive selection
-      const NONE={changed:'Nothing has changed',household:'Nothing has changed',
-                  before:'Nothing I can identify',after:'Nothing changes',
-                  signs:'',clinical:''};
       const none=NONE[n];
       if(none){
         if(v===none){A[n]=[none]}else{A[n]=A[n].filter(x=>x!==none)}
@@ -608,15 +691,21 @@ function render(){
   el.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>{
     const g=b.closest('.triple'), n=g.dataset.name;
     A[n]=A[n]||{}; A[n][b.dataset.i]=b.dataset.o;
-    g.querySelectorAll('.tbtn').forEach(x=>{ if(x.dataset.i===b.dataset.i) x.classList.toggle('on',x===b); });
+    g.querySelectorAll('.tbtn').forEach(x=>{ if(x.dataset.i===b.dataset.i){
+      x.classList.toggle('on',x===b); x.setAttribute('aria-pressed', String(x===b)); } });
   }));
   el.querySelectorAll('select,input,textarea').forEach(f=>
-    f.addEventListener('input',()=>{A[f.dataset.name]=f.value; if(step===1)render();}));
-  el.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>{if(step===6)setTimeout(render,0)}));
+    f.addEventListener('input',()=>{A[f.dataset.name]=f.value; syncNext();
+      if(step===1&&f.dataset.name==='species'){
+        if(!behaviorsFor(A.species).includes(A.behavior)){A.behavior='';A.behaviorOther='';}
+        render();
+      } else if(step===1&&f.dataset.name==='behavior'){
+        if(!isOther())A.behaviorOther='';
+        render();
+      }}));
+  el.querySelectorAll('.tbtn').forEach(b=>b.addEventListener('click',()=>{syncNext()}));
 
-  const need=step===1?['species','behavior','place','directed','when','freq','episode','duration']:[];
-  let ok=need.every(k=>A[k]);
-  if(step===6){const P=A.prov||{}; ok=relevantFor().every(r=>P[r]);}
+  const ok=stepOk();
   nav.innerHTML = step===0?`<span></span><button class="go" id="next">Begin</button>`
     : step===SCREENS.length-1?``
     : `<button class="back" id="prev">Back</button><button class="go" id="next" ${ok?'':'disabled'}>Continue</button>`;
@@ -628,3 +717,4 @@ render();
 </script>
 </body>
 </html>
+
